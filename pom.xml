@@ -1,0 +1,149 @@
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.ancoron.javaee</groupId>
+    <artifactId>javaee</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>JavaEE tools</name>
+    <url>https://github.com/ancoron/javaee-tests</url>
+    
+    <licenses>
+        <license>
+            <name>Apache Software License 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>manual</distribution>
+        </license>
+    </licenses>
+    
+    <scm>
+        <connection>scm:git:git@github.com:ancoron/javaee-tests.git</connection>
+        <developerConnection>scm:git:git@github.com:ancoron/javaee-tests.git</developerConnection>
+        <url>git@github.com:ancoron/javaee-tests.git</url>
+    </scm>
+    
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/ancoron/javaee-tests/issues</url>
+    </issueManagement>
+
+    <distributionManagement>
+        <repository>
+            <id>sonatype-nexus-staging</id>
+            <name>Staging artifacts</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+        </repository>
+        <snapshotRepository>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Snapshot artifacts</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+    
+    <developers>
+        <developer>
+            <id>ancoron</id>
+            <email>ancoron.luciferis@gmail.com</email>
+            <name>Ancoron Luciferis</name>
+            <roles>
+                <role>developer</role>
+                <role>maintainer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jeetools.osgi.import.jeetools.version>version="[$(version;==;${jeetools.osgi.version.clean}),$(version;=+;${jeetools.osgi.version.clean}))"</jeetools.osgi.import.jeetools.version>
+        <jeetools.osgi.import.strict.version>version="[$(version;===;${jeetools.osgi.version.clean}),$(version;==+;${jeetools.osgi.version.clean}))"</jeetools.osgi.import.strict.version>
+        <jeetools.osgi.import.default.version>[$(version;==;$(@)),$(version;+;$(@)))</jeetools.osgi.import.default.version>
+        <jeetools.osgi.import.defaults>
+        </jeetools.osgi.import.defaults>
+        <jeetools.osgi.import.before.defaults />
+        <jeetools.osgi.import.additional />
+        <jeetools.osgi.import.pkg>
+            ${jeetools.osgi.import.before.defaults},
+            ${jeetools.osgi.import.defaults},
+            ${jeetools.osgi.import.additional},
+            *
+        </jeetools.osgi.import.pkg>
+        <jeetools.osgi.activator />
+        <jeetools.osgi.failok>false</jeetools.osgi.failok>
+        <jeetools.osgi.export>${jeetools.osgi.export.pkg};${jeetools.osgi.version};-noimport:=true</jeetools.osgi.export>
+        <!--
+        <jeetools.osgi.export.pkg>!*.impl;${jeetools.artifact}*</jeetools.osgi.export.pkg>
+        <jeetools.osgi.private.pkg>${jeetools.artifact}*.impl</jeetools.osgi.private.pkg>
+        -->
+        <jeetools.osgi.export.pkg>${jeetools.artifact}*</jeetools.osgi.export.pkg>
+        <jeetools.osgi.private.pkg></jeetools.osgi.private.pkg>
+        <jeetools.osgi.version>version=${project.version}</jeetools.osgi.version>
+        <jeetools.osgi.split.pkg>-split-package:=first</jeetools.osgi.split.pkg>
+        <jeetools.osgi.import>${jeetools.osgi.import.pkg}</jeetools.osgi.import>
+        <jeetools.osgi.dynamic />
+        <jeetools.osgi.symbolic.name>${jeetools.artifact}</jeetools.osgi.symbolic.name>
+        <jeetools.osgi.exclude.dependencies>false</jeetools.osgi.exclude.dependencies>
+        <jeetools.osgi.remove.headers>Ignore-Package,Include-Resource,Private-Package,Bundle-DocURL</jeetools.osgi.remove.headers>
+        <jeetools.osgi.include.resource>{maven-resources}</jeetools.osgi.include.resource>
+        <jeetools.osgi.embed></jeetools.osgi.embed>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.3.4</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <excludeDependencies>${jeetools.osgi.exclude.dependencies}</excludeDependencies>
+                    <instructions>
+                        <Bundle-Name>${project.name}</Bundle-Name>
+                        <Bundle-SymbolicName>${jeetools.osgi.symbolic.name}</Bundle-SymbolicName>
+                        <Bundle-Activator>${jeetools.osgi.activator}</Bundle-Activator>
+                        <Export-Package>${jeetools.osgi.export}</Export-Package>
+                        <Import-Package>${jeetools.osgi.import}</Import-Package>
+                        <DynamicImport-Package>${jeetools.osgi.dynamic}</DynamicImport-Package>
+                        <Private-Package>${jeetools.osgi.private.pkg}</Private-Package>
+                        <Implementation-Title>jeetools</Implementation-Title>
+                        <Implementation-Version>${project.version}</Implementation-Version>
+                        <Include-Resource>${jeetools.osgi.include.resource}</Include-Resource>
+                        <_versionpolicy>${jeetools.osgi.import.default.version}</_versionpolicy>
+                        <_removeheaders>${jeetools.osgi.remove.headers}</_removeheaders>
+                        <_failok>${jeetools.osgi.failok}</_failok>
+                        <Export-Service>${jeetools.osgi.export.service}</Export-Service>
+                        <Import-Service>${jeetools.osgi.import.service}</Import-Service>
+                        <Embed-Dependency>${jeetools.osgi.embed}</Embed-Dependency>
+                    </instructions>
+                    <versions>
+                        <jeetools.osgi.version.clean>${project.version}</jeetools.osgi.version.clean>
+                    </versions>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>cleanVersions</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <modules>
+        <module>sudo</module>
+        <module>sudo-glassfish-3.1</module>
+    </modules>
+</project>
