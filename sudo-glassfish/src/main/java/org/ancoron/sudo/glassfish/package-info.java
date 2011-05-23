@@ -14,17 +14,8 @@
  * limitations under the License.
  */
 
-package org.ancoron.javaee.sudo;
-
 /**
- *
- * @author ancoron
+ * This package contains all classes that are required in order to
+ * programmatically authenticate against a JAAS realm inside GlassFish.
  */
-public interface SudoAction<T> {
-
-    public T run();
-
-    public String getUsername();
-    public char[] getPassword();
-    public String getRealm();
-}
+package org.ancoron.sudo.glassfish;

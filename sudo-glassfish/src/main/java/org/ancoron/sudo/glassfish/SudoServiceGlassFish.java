@@ -14,35 +14,70 @@
  * limitations under the License.
  */
 
-package org.ancoron.javaee.sudo;
+package org.ancoron.sudo.glassfish;
 
+import org.ancoron.sudo.SudoAction;
 import com.sun.enterprise.security.SecurityContext;
 import com.sun.enterprise.security.auth.login.common.PasswordCredential;
+import com.sun.enterprise.security.auth.login.common.X509CertificateCredential;
 import java.security.AccessController;
 import java.security.Principal;
 import java.security.PrivilegedAction;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
+import org.ancoron.sudo.SudoService;
 
 /**
+ * This class executes a given {@link SudoAction}.
  *
  * @author ancoron
  */
-public class SudoService {
+public class SudoServiceGlassFish implements SudoService {
+    
+    private Logger log = Logger.getLogger(SudoService.class.getName());
 
+    @Override
     public <T> T sudo(final SudoAction<T> c) throws LoginException {
         Set<Object> credsPrivate = new HashSet<Object>();
         
-        // this is just for a simple password test (could also be cert stuff)
-        PasswordCredential pwd = new PasswordCredential(
-                c.getUsername(),
-                c.getPassword(),
-                c.getRealm());
+        
+        switch(c.getType()) {
+            case USERNAME_PASSWORD: {
+                if(log.isLoggable(Level.FINE)) {
+                    log.log(Level.FINE, "[SUDO] Request: {0} (username={1}, password=********, realm={2})",
+                            new Object[]{c.getType().name(), c.getUsername(), c.getRealm()});
+                }
+                PasswordCredential pwd = new PasswordCredential(
+                        c.getUsername(),
+                        c.getPassword(),
+                        c.getRealm());
 
-        credsPrivate.add(pwd);
+                credsPrivate.add(pwd);
+                break;
+            }
+            case CLIENT_CERT: {
+                if(log.isLoggable(Level.FINE)) {
+                    log.log(Level.FINE, "[SUDO] Request: {0} (cert-chain-length={1}, alias={2}, realm={3})",
+                            new Object[]{c.getType().name(), c.getCertChain().length, c.getAlias(), c.getRealm()});
+                }
+                X509CertificateCredential cert = new X509CertificateCredential(
+                        c.getCertChain(),
+                        c.getAlias(),
+                        c.getRealm());
+
+                credsPrivate.add(cert);
+                break;
+            }
+            default:
+                throw new IllegalArgumentException(
+                        "[SUDO] Illegal return value for SudoAction.getType() --> "
+                        + c.getType());
+        }
 
         // note the "final" here...
         final Subject s = new Subject(false,
@@ -68,12 +103,18 @@ public class SudoService {
                         }
                     });
             SecurityContext.setCurrent(newCtx);
+            if(log.isLoggable(Level.FINE)) {
+                log.fine("[SUDO] New SecurityContext established");
+            }
 
             // execute whatever you want...
             return c.run();
         } finally {
             // restore the original security context to not break anything...
             SecurityContext.setCurrent(secCtx);
+            if(log.isLoggable(Level.FINE)) {
+                log.fine("[SUDO] Original SecurityContext restored");
+            }
         }
     }
 }
