@@ -13,32 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.ancoron.sudo.glassfish.test;
 
-package org.ancoron.sudo;
+import javax.annotation.Resource;
+import javax.annotation.security.RolesAllowed;
+import javax.ejb.EJB;
+import javax.ejb.EJBContext;
+import javax.ejb.Local;
+import javax.ejb.Stateless;
 
 /**
- * The login type specified for a specific {@link SudoAction} implementation.
  *
  * @author ancoron
  */
-public enum LoginType {
+@Stateless
+@EJB(name="java:global/sudo/glassfish/SecuredEJB", beanInterface=SecuredEJB.class)
+@Local
+public class SecuredEJBImpl implements SecuredEJB {
+    
+    @Resource
+    private EJBContext context;
 
-    /**
-     * Designates the {@link SudoAction} to authenticate using a username/password
-     * scheme.
-     */
-    USERNAME_PASSWORD,
-    
-    /**
-     * Designates the {@link SudoAction} to authenticate using a client certificate
-     * scheme.
-     */
-    CLIENT_CERT,
-    
-    /**
-     * Designates the {@link SudoAction} to <b>not</b> authenticate.
-     * 
-     * @since 1.0.1
-     */
-    NO_LOGIN;
+    @RolesAllowed("testGroup")
+    @Override
+    public String sayHello(String name) {
+        return "Hello " + name + " from " + context.getCallerPrincipal().getName() + "!";
+    }
 }

@@ -13,32 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.ancoron.sudo.glassfish.test;
 
-package org.ancoron.sudo;
+import javax.annotation.security.RolesAllowed;
 
 /**
- * The login type specified for a specific {@link SudoAction} implementation.
  *
  * @author ancoron
  */
-public enum LoginType {
+public interface SecuredEJB {
 
-    /**
-     * Designates the {@link SudoAction} to authenticate using a username/password
-     * scheme.
-     */
-    USERNAME_PASSWORD,
+    @RolesAllowed(value = "testGroup")
+    String sayHello(String name);
     
-    /**
-     * Designates the {@link SudoAction} to authenticate using a client certificate
-     * scheme.
-     */
-    CLIENT_CERT,
-    
-    /**
-     * Designates the {@link SudoAction} to <b>not</b> authenticate.
-     * 
-     * @since 1.0.1
-     */
-    NO_LOGIN;
 }

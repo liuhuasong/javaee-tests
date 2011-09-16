@@ -1,0 +1,102 @@
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.ancoron.javaee</groupId>
+        <artifactId>javaee</artifactId>
+        <version>1.0.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>sudo-test</artifactId>
+    <packaging>jar</packaging>
+
+    <name>sudo for GlassFish integration test</name>
+
+    <properties>
+        <glassfish.version>3.1.1</glassfish.version>
+        <com.sun.aas.installRoot>${project.build.directory}/glassfish</com.sun.aas.installRoot>
+        <com.sun.aas.instanceRoot>${com.sun.aas.installRoot}/domains/domain1</com.sun.aas.instanceRoot>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sudo-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sudo-glassfish</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.9</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.extras</groupId>
+            <artifactId>glassfish-embedded-all</artifactId>
+            <version>${glassfish.version}</version>
+        </dependency>
+    </dependencies>
+    
+    <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+            <testResource>
+                <directory>src/test/glassfish</directory>
+                <filtering>true</filtering>
+                <targetPath>${project.build.directory}/glassfish</targetPath>
+            </testResource>
+        </testResources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.3</version>
+                <executions>
+                    <execution>
+                        <id>initialize-endorsed</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.glassfish</groupId>
+                                    <artifactId>javax.annotation</artifactId>
+                                    <version>${glassfish.version}</version>
+                                    <type>jar</type>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>${project.build.directory}/endorsed</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>true</overWriteSnapshots>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.9</version>
+                <configuration>
+                    <systemPropertyVariables>
+                        <com.sun.aas.installRoot>${com.sun.aas.installRoot}</com.sun.aas.installRoot>
+                        <com.sun.aas.instanceRoot>${com.sun.aas.instanceRoot}</com.sun.aas.instanceRoot>
+                        <java.security.auth.login.config>${project.build.directory}/glassfish/domains/domain1/config/login.conf</java.security.auth.login.config>
+                    </systemPropertyVariables>
+                    <argLine>-Djava.endorsed.dirs=${project.build.directory}/endorsed:${java.endorsed.dirs}</argLine>
+                    <forkMode>once</forkMode>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

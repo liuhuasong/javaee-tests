@@ -1,0 +1,8 @@
+# This file contains users, salted password hashes and groups
+#
+# an encoded hash can be produced by a simple command line like this:
+# 
+#
+# test;{SSHA256}RsvY2gBprLirxbEgUklqKGWiH31uDnMgyL54eGGgNs48PpYVUkILtg==;
+#alice;{SSHA256}ZWRmMDI3MGZmODRlYTBhZmZiODcyYmNjNzIzODUwNGE5YmRmZDY4ZGI5MWMxMDRmOTU0MDk3YmVkYjMzYWYxMWFiY2RlZmdo;testGroup
+alice;{SSHA256}KjA0WKjxSXhqnbB+wWvsmGNY9efB3XNy2JZz0S/ngx738OckWCXzrw==;testGroup

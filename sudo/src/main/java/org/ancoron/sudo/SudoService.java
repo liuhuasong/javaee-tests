@@ -19,6 +19,12 @@ package org.ancoron.sudo;
 import javax.security.auth.login.LoginException;
 
 /**
+ * This interface is describes all functionalities provided by an implementation.
+ * 
+ * <p>
+ * Within an OSGi environment implementations are recommended to register a
+ * service using this interface.
+ * </p>
  *
  * @author ancoron
  */
@@ -33,6 +39,8 @@ public interface SudoService {
      *          {@link SudoAction}
      * 
      * @throws LoginException if the authentication fails
+     * @throws SudoExecutionException if the execution of 
+     * {@link SudoAction#run() } fails
      */
-    public <T> T sudo(final SudoAction<T> c) throws LoginException;
+    public <T> T sudo(final SudoAction<T> c) throws LoginException, SudoExecutionException;
 }

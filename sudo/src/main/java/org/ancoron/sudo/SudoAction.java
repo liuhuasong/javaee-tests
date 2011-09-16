@@ -16,7 +16,10 @@
 
 package org.ancoron.sudo;
 
+import java.security.Principal;
+import java.security.acl.Group;
 import java.security.cert.X509Certificate;
+import javax.security.auth.Subject;
 
 /**
  * This interface is designed to enable security session switching between users.
@@ -24,6 +27,8 @@ import java.security.cert.X509Certificate;
  * <p>Implementations of this interface must ensure that all required data is
  * available. This depends on the return value of {@link #getType() }:</p>
  * 
+ * <ol>
+ * <li>
  * <p>For a username/password login ({@link LoginType#USERNAME_PASSWORD}) method
  * this will be the following:
  * 
@@ -32,13 +37,34 @@ import java.security.cert.X509Certificate;
  * <li>{@link #getPassword() }</li>
  * </ul>
  * </p>
- * 
+ * </li>
+ * <li>
  * <p>For client certificate authentication ({@link LoginType#USERNAME_PASSWORD})
  * the following will be used:
  * 
  * <ul>
  * <li>{@link #getCertChain() }</li>
  * <li>{@link #getAlias() }</li>
+ * </ul>
+ * </p>
+ * </li>
+ * <li>
+ * <p>For something without authentication ({@link LoginType#NO_LOGIN})
+ * the following will be used:
+ * 
+ * <ul>
+ * <li>{@link #getSubject() }</li>
+ * </ul>
+ * </p>
+ * </li>
+ * </ol>
+ * 
+ * <p>
+ * However, for the first two cases you may return something that is meaningful
+ * to you using the following methods:
+ * <ul>
+ * <li>{@link #getCallerPrincipal() }</li>
+ * <li>{@link #getGroups() }</li>
  * </ul>
  * </p>
  * 
@@ -58,8 +84,10 @@ public interface SudoAction<T> {
      * principal.
      * 
      * @return The result of the business logic
+     * 
+     * @throws Exception Any exception is allowed here
      */
-    public T run();
+    public T run() throws Exception;
 
     /**
      * The username to authenticate.
@@ -83,6 +111,15 @@ public interface SudoAction<T> {
     public String getRealm();
 
     /**
+     * The JAAS context to login to.
+     * 
+     * @return The name of the target JAAS context
+     * 
+     * @since 1.0.1
+     */
+    public String getContext();
+
+    /**
      * The certificate chain to use for authentication.
      * 
      * @return The certificate chain
@@ -95,4 +132,51 @@ public interface SudoAction<T> {
      * @return The name of the certificate alias
      */
     public String getAlias();
+    
+    /**
+     * A custom principal to use as the "caller" {@link Principle}.
+     * 
+     * Usually the first principal inside a {@link Subject} is used as the 
+     * calling principal inside application containers. So you can specify one
+     * here to be set into the created {@link Subject}.
+     * 
+     * @return The {@link Principal} to be used as the calling one
+     * 
+     * @since 1.0.1
+     */
+    public Principal getCallerPrincipal();
+
+    /**
+     * The {@link Group}s to use for the {@link Subject}.
+     * 
+     * In case this method returns not <tt>null</tt> all containing groups are
+     * made available preserving the order inside the established Subject.
+     * 
+     * @return A non-empty array of {@link Group} instances
+     * 
+     * @since 1.0.1
+     */
+    public Group[] getGroups();
+
+    /**
+     * The {@link Subject} that should be used instead of creating a new one.
+     * 
+     * This has to be prefilled for the requirements of the application server.
+     * 
+     * Furthermore in case this method returns anything other than <tt>null</tt>
+     * it is being used as is and the following methods are not going to be used:
+     * <ul>
+     * <li>{@link #getUsername() }</li>
+     * <li>{@link #getPassword() }</li>
+     * <li>{@link #getCertChain() }</li>
+     * <li>{@link #getAlias() }</li>
+     * <li>{@link #getCallerPrincipal() }</li>
+     * <li>{@link #getGroups() }</li>
+     * </ul>
+     * 
+     * @return The {@link Subject} used for authentication and authorization
+     * 
+     * @since 1.0.1
+     */
+    public Subject getSubject();
 }
