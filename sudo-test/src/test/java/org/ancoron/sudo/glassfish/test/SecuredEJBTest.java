@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.ejb.EJBAccessException;
 import javax.ejb.embeddable.EJBContainer;
+import javax.security.auth.Subject;
+import org.ancoron.sudo.AbstractNoLoginSudoAction;
 import org.ancoron.sudo.AbstractPasswordSudoAction;
 import org.ancoron.sudo.SudoAction;
 import org.ancoron.sudo.SudoService;
@@ -116,7 +118,7 @@ public class SecuredEJBTest {
 
             @Override
             public char[] getPassword() {
-                return "ProfitBricks-Guest".toCharArray();
+                return "test".toCharArray();
             }
 
             @Override
