@@ -112,11 +112,15 @@ public class SudoServiceGlassFish implements SudoService {
 
         // save the current security context...
         final SecurityContext secCtx = SecurityContext.getCurrent();
+        
+        final LoginContext lc;
 
         if(c.getType() != LoginType.NO_LOGIN) {
             // this issues the real login and fills the subject with user roles...
-            LoginContext lc = new LoginContext(c.getContext(), s);
+            lc = new LoginContext(c.getRealm(), s);
             lc.login();
+        } else {
+            lc = null;
         }
         
         T result = null;
@@ -143,6 +147,14 @@ public class SudoServiceGlassFish implements SudoService {
                 throw new SudoExecutionException(secCtx.getCallerPrincipal(), x);
             }
         } finally {
+            if(lc != null) {
+                try {
+                    lc.logout();
+                } catch(LoginException x) {
+                    x.printStackTrace(System.err);
+                }
+            }
+
             // restore the original security context to not break anything...
             SecurityContext.setCurrent(secCtx);
             if(log.isLoggable(Level.FINE)) {
