@@ -38,6 +38,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.glassfish.common</groupId>
+            <artifactId>common-util</artifactId>
+            <version>${glassfish.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.glassfish.extras</groupId>
             <artifactId>glassfish-embedded-all</artifactId>
             <version>${glassfish.version}</version>
@@ -89,9 +95,11 @@
                 <version>2.9</version>
                 <configuration>
                     <systemPropertyVariables>
+                        <java.util.logging.config.file>${project.build.testOutputDirectory}/logging.properties</java.util.logging.config.file>
                         <com.sun.aas.installRoot>${com.sun.aas.installRoot}</com.sun.aas.installRoot>
                         <com.sun.aas.instanceRoot>${com.sun.aas.instanceRoot}</com.sun.aas.instanceRoot>
                         <java.security.auth.login.config>${project.build.directory}/glassfish/domains/domain1/config/login.conf</java.security.auth.login.config>
+                        <java.security.debug>failure</java.security.debug>
                     </systemPropertyVariables>
                     <argLine>-Djava.endorsed.dirs=${project.build.directory}/endorsed:${java.endorsed.dirs}</argLine>
                     <forkMode>once</forkMode>

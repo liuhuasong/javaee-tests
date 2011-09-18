@@ -15,9 +15,13 @@
  */
 package org.ancoron.sudo.glassfish.test;
 
+import com.sun.enterprise.security.auth.login.DistinguishedPrincipalCredential;
 import java.io.File;
+import java.security.Principal;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 import javax.ejb.EJBAccessException;
 import javax.ejb.embeddable.EJBContainer;
 import javax.security.auth.Subject;
@@ -26,6 +30,7 @@ import org.ancoron.sudo.AbstractPasswordSudoAction;
 import org.ancoron.sudo.SudoAction;
 import org.ancoron.sudo.SudoService;
 import org.ancoron.sudo.glassfish.SudoServiceGlassFish;
+import org.glassfish.security.common.Group;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -136,5 +141,58 @@ public class SecuredEJBTest {
         String result = sudo.sudo(action);
 
         System.out.println("SUDO (username/password) invocation OK: " + result);
+    }
+
+    @Test
+    public void testSayHelloNoLogin() throws Exception {
+        System.out.println("sayHello");
+
+        final String name = "bob";
+
+        SudoAction<String> action = new AbstractNoLoginSudoAction<String>() {
+
+            @Override
+            public String run() throws Exception {
+                SecuredEJB instance = (SecuredEJB) container.getContext().lookup("java:global/sudo/glassfish/SecuredEJB");
+                
+                return instance.sayHello(name);
+            }
+
+            @Override
+            public String getRealm() {
+                return "file";
+            }
+
+            @Override
+            public String getContext() {
+                return "fileRealm";
+            }
+
+            @Override
+            public Subject getSubject() {
+                Set<Principal> principals = new LinkedHashSet<Principal>();
+                Set<Object> priv = new LinkedHashSet<Object>();
+                Set<Object> pub = new LinkedHashSet<Object>();
+                
+                Principal p = new MyPrincipal("alice", "somewhere");
+                
+                // this is the key: groups must be of type:
+                // org.glassfish.security.common.Group
+                Group g = new Group("testGroup");
+                
+                principals.add(p);
+                principals.add(g);
+
+                DistinguishedPrincipalCredential dpc = new DistinguishedPrincipalCredential(p);
+                pub.add(dpc);
+
+                return new Subject(false, principals, pub, priv);
+            }
+        };
+
+        SudoService sudo = new SudoServiceGlassFish();
+        String result = sudo.sudo(action);
+
+        System.out.println("SUDO (no-login) invocation OK: " + result);
     }
 }
