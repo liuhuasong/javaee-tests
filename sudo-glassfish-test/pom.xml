@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.ancoron.javaee</groupId>
         <artifactId>javaee</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.0.1</version>
     </parent>
 
     <artifactId>sudo-test</artifactId>
