@@ -165,7 +165,7 @@
     </build>
 
     <modules>
-        <module>sudo</module>
+        <module>sudo-api</module>
         <module>sudo-api-glassfish</module>
         <module>sudo-glassfish</module>
         <module>sudo-glassfish-test</module>
