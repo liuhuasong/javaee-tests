@@ -11,7 +11,7 @@
     <artifactId>sudo-api</artifactId>
     <packaging>bundle</packaging>
 
-    <name>sudo-api</name>
+    <name>sudo API</name>
     
     <properties>
         <jeetools.artifact>org.ancoron.sudo</jeetools.artifact>

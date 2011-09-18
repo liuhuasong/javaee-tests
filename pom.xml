@@ -61,7 +61,10 @@
     </developers>
 
     <properties>
+        <glassfish.version>3.1.1</glassfish.version>
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
         <jeetools.osgi.import.jeetools.version>version="[$(version;==;${jeetools.osgi.version.clean}),$(version;=+;${jeetools.osgi.version.clean}))"</jeetools.osgi.import.jeetools.version>
         <jeetools.osgi.import.strict.version>version="[$(version;===;${jeetools.osgi.version.clean}),$(version;==+;${jeetools.osgi.version.clean}))"</jeetools.osgi.import.strict.version>
         <jeetools.osgi.import.default.version>[$(version;==;$(@)),$(version;+;$(@)))</jeetools.osgi.import.default.version>
@@ -163,6 +166,7 @@
 
     <modules>
         <module>sudo</module>
+        <module>sudo-api-glassfish</module>
         <module>sudo-glassfish</module>
         <module>sudo-glassfish-test</module>
     </modules>

@@ -53,7 +53,6 @@
     </profiles>
     <properties>
         <jeetools.artifact>org.ancoron.sudo.glassfish</jeetools.artifact>
-        <glassfish.version>3.1.1</glassfish.version>
     </properties>
 
     <dependencies>

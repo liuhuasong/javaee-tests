@@ -14,7 +14,6 @@
     <name>sudo for GlassFish integration test</name>
 
     <properties>
-        <glassfish.version>3.1.1</glassfish.version>
         <com.sun.aas.installRoot>${project.build.directory}/glassfish</com.sun.aas.installRoot>
         <com.sun.aas.instanceRoot>${com.sun.aas.installRoot}/domains/domain1</com.sun.aas.instanceRoot>
     </properties>
@@ -23,6 +22,11 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sudo-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sudo-api-glassfish</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
