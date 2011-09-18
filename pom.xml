@@ -164,6 +164,6 @@
     <modules>
         <module>sudo</module>
         <module>sudo-glassfish</module>
-        <module>sudo-test</module>
+        <module>sudo-glassfish-test</module>
     </modules>
 </project>
