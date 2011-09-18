@@ -58,4 +58,9 @@ public abstract class AbstractPasswordSudoAction<T> implements SudoAction<T> {
     public Subject getSubject() {
         return null;
     }
+
+    @Override
+    public String getContext() {
+        return getRealm();
+    }
 }

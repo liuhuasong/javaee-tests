@@ -60,4 +60,9 @@ public abstract class AbstractX509SudoAction<T> implements SudoAction<T> {
     public char[] getPassword() {
         return null;
     }
+
+    @Override
+    public String getContext() {
+        return getRealm();
+    }
 }
